@@ -1,0 +1,37 @@
+接口：WXLogicInterface    定义各种方法 public function callback_text($postObj);
+
+
+
+
+实现接口，继承方法：具体化处理
+class WXLogic implements WXLogicInterface
+
+
+
+事件触发与处理：public function trigger($e_name, $scope = array())
+    {
+        call_user_func_array($this->eventMap[$e_name], $scope);
+    }
+class WXEvent extends Component
+
+
+调用事件的点：
+ $this->trigger($msgType, array(
+                        $postObj
+                    ));
+
+
+
+这是一个什么事件？一个软件系统里，有诸多事件，发布新微博是事件，删除微博也是一种事件。
+谁触发了事件？你发的微博，就是你触发的事件。
+谁负责监听这个事件？或者谁能知道这个事件发生了？服务器上处理用户注册的模块，肯定不会收到你发出新微博的事件。
+事件怎么处理？对于发布新微博的事件，就是通知关注了你的其他用户。
+事件相关数据是什么？对于发布新微博事件，包含的数据至少要有新微博的内容，时间等。
+
+1.事件是在 yii\base\Component 中引入的，注意， yii\base\Object 不支持事件
+2.事件函数yii\base\Event
+3.事件handle，所谓事件handler就是事件处理程序，负责事件触发后怎么办的问题
+4.事件的触发，事件的触发，需要调用 yii\base\Component::trigger()
+5.调用事件触发，页面驱动
+6.重构handle，在触发事件时，可以把与事件相关的数据传递给所有的handler。比如，发布新微博事件:
+
